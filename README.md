@@ -13,6 +13,14 @@ A modern, elegant, interactive Tree of Life visualizer built with Next.js and p5
 
 ## ✨ Features
 
+### Currently Implemented (Milestone 0)
+- ✅ Next.js 15 with TypeScript and strict mode
+- ✅ p5.js visualization with instance mode
+- ✅ Responsive canvas with resize handling
+- ✅ FPS counter overlay
+- ✅ Animated test visualization
+
+### Planned Features
 - 🌳 **50,000+ Taxa** - Explore the complete Tree of Life with smooth performance
 - 🎨 **Multiple Layouts** - Switch between radial and rectangular tree visualizations
 - 🔍 **Smart Search** - Fuzzy search with instant suggestions and jump-to-taxon
@@ -40,23 +48,17 @@ git clone https://github.com/alpha-adam/tol.git
 cd tol
 
 # Install dependencies
-pnpm install
-# or
 npm install
 
-# Set up environment variables
+# Set up environment variables (optional for LLM features)
 cp .env.example .env.local
 # Edit .env.local with your API keys
 
-# Fetch and process tree data
-pnpm tsx scripts/fetch_otol.ts
-pnpm tsx scripts/preprocess_tree.ts
-
 # Start development server
-pnpm dev
-# or
 npm run dev
 ```
+
+**Note:** Tree data fetching and preprocessing scripts will be implemented in Milestone 2.
 
 Open [http://localhost:3000](http://localhost:3000) to see the visualizer.
 
@@ -191,13 +193,11 @@ For detailed documentation, see the [docs/](docs/) directory:
 ### Available Scripts
 
 ```bash
-pnpm dev          # Start development server
-pnpm build        # Build for production
-pnpm start        # Start production server
-pnpm lint         # Run ESLint
-pnpm test         # Run unit tests
-pnpm test:e2e     # Run E2E tests
-pnpm typecheck    # Run TypeScript type checking
+npm run dev       # Start development server
+npm run build     # Build for production
+npm run start     # Start production server
+npm run lint      # Run ESLint
+npm run typecheck # Run TypeScript type checking
 ```
 
 ### Project Setup from Scratch
@@ -207,38 +207,35 @@ pnpm typecheck    # Run TypeScript type checking
 
 #### 1. Create Next.js App
 ```bash
-pnpm create next-app@latest tree-of-life --ts --eslint --tailwind --app --src-dir false --import-alias @/*
+npx create-next-app@latest tree-of-life --ts --eslint --tailwind --app --no-src-dir --import-alias @/*
 cd tree-of-life
 ```
 
 #### 2. Install Core Dependencies
 ```bash
 # Runtime dependencies
-pnpm add p5 zustand fuse.js next-themes 
-pnpm add @radix-ui/react-dialog @radix-ui/react-popover 
-pnpm add @radix-ui/react-slider @radix-ui/react-tabs 
-pnpm add class-variance-authority clsx tailwind-merge
+npm install p5 zustand fuse.js next-themes 
+npm install @radix-ui/react-dialog @radix-ui/react-popover 
+npm install @radix-ui/react-slider @radix-ui/react-tabs 
+npm install class-variance-authority clsx tailwind-merge
 
 # Development dependencies
-pnpm add -D @types/p5 @testing-library/react 
-pnpm add -D @testing-library/jest-dom vitest 
-pnpm add -D playwright @playwright/test tsx
+npm install -D @types/p5
+
+# Note: Additional dev dependencies for testing will be added later
 ```
 
-#### 3. Setup UI Components
+#### 3. Setup Project Structure
 ```bash
-pnpm dlx shadcn@latest init -d
-pnpm dlx shadcn@latest add button input slider tabs 
-pnpm dlx shadcn@latest add dialog popover tooltip sheet 
-pnpm dlx shadcn@latest add switch select breadcrumb
+# Create necessary directories
+mkdir -p components lib store types
 ```
 
-#### 4. Prepare Data
+#### 4. Configure Tailwind CSS
+Ensure you're using Tailwind CSS v3 for compatibility with Next.js 15:
 ```bash
-mkdir -p public/data scripts
-# Create fetch and preprocessing scripts
-pnpm tsx scripts/fetch_otol.ts
-pnpm tsx scripts/preprocess_tree.ts
+npm uninstall tailwindcss
+npm install tailwindcss@^3
 ```
 
 </details>
@@ -266,19 +263,19 @@ Detailed milestone checklist for incremental development:
 
 ### Phase 1: Foundation (Milestones 0-3)
 
-#### Milestone 0 — Project Setup & Hello Canvas
-- [ ] Initialize Next.js 14 app with TypeScript and Tailwind CSS
-- [ ] Configure `tsconfig.json` with strict mode and path aliases
-- [ ] Set up ESLint and Prettier with consistent code style rules
-- [ ] Create base `app/layout.tsx` with viewport meta and fonts
-- [ ] Create `app/page.tsx` with basic layout structure
-- [ ] Install p5.js and @types/p5 dependencies
-- [ ] Create `components/TreeCanvas.tsx` using dynamic import with `ssr: false`
-- [ ] Set up p5 instance mode with proper TypeScript types
-- [ ] Render full-viewport canvas with resize handler
-- [ ] Draw animated test circle to verify p5 is working
-- [ ] Add FPS counter overlay with toggle button
-- [ ] Create basic `components/TopBar.tsx` with app title
+#### Milestone 0 — Project Setup & Hello Canvas ✅
+- [x] Initialize Next.js 14 app with TypeScript and Tailwind CSS
+- [x] Configure `tsconfig.json` with strict mode and path aliases
+- [x] Set up ESLint with consistent code style rules
+- [x] Create base `app/layout.tsx` with viewport meta and fonts
+- [x] Create `app/page.tsx` with basic layout structure
+- [x] Install p5.js and @types/p5 dependencies
+- [x] Create `components/TreeCanvas.tsx` using dynamic import with `ssr: false`
+- [x] Set up p5 instance mode with proper TypeScript types
+- [x] Render full-viewport canvas with resize handler
+- [x] Draw animated test circle to verify p5 is working
+- [x] Add FPS counter overlay with toggle button
+- [x] Create basic `components/TopBar.tsx` with app title
 
 #### Milestone 1 — Camera System & Controls
 - [ ] Create `lib/camera.ts` with Camera class

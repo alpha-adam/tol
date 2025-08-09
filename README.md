@@ -1,8 +1,85 @@
-## Tree of Life Visualizer
+# Tree of Life Visualizer
 
-A modern, elegant, interactive Tree of Life visualizer built with Next.js and p5.js. Animated, zoomable, and searchable with rich interactions, theming, LLM-assisted exploration, and full mobile support.
+[![Next.js](https://img.shields.io/badge/Next.js-14-black?logo=next.js)](https://nextjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?logo=typescript)](https://www.typescriptlang.org/)
+[![p5.js](https://img.shields.io/badge/p5.js-1.7-ed225d)](https://p5js.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-### Goals
+A modern, elegant, interactive Tree of Life visualizer built with Next.js and p5.js. Explore 50,000+ taxa with fluid animations, rich interactions, and LLM-assisted learning.
+
+[Live Demo](#) | [Documentation](docs/) | [Report Bug](https://github.com/alpha-adam/tol/issues) | [Request Feature](https://github.com/alpha-adam/tol/issues)
+
+![Tree of Life Visualizer Demo](public/demo.gif)
+
+## ✨ Features
+
+- 🌳 **50,000+ Taxa** - Explore the complete Tree of Life with smooth performance
+- 🎨 **Multiple Layouts** - Switch between radial and rectangular tree visualizations
+- 🔍 **Smart Search** - Fuzzy search with instant suggestions and jump-to-taxon
+- 🤖 **LLM Integration** - Learn about taxa with AI-powered explanations
+- 🎯 **Rich Interactions** - Hover, click, zoom, pan with mouse and touch
+- 🌙 **Theming** - Light/dark modes with customizable color palettes
+- 📱 **Mobile First** - Full touch support with responsive UI
+- ♿ **Accessible** - Keyboard navigation and screen reader support
+- 🚀 **Fast** - Progressive rendering, Web Workers, and optimized hit-testing
+- 🔗 **Shareable** - Deep linking to specific taxa and view states
+
+## 🚀 Quick Start
+
+### Prerequisites
+
+- Node.js 20+ 
+- pnpm (recommended) or npm
+- Optional: Redis for caching (e.g., [Upstash](https://upstash.com))
+
+### Installation
+
+```bash
+# Clone the repository
+git clone https://github.com/alpha-adam/tol.git
+cd tol
+
+# Install dependencies
+pnpm install
+# or
+npm install
+
+# Set up environment variables
+cp .env.example .env.local
+# Edit .env.local with your API keys
+
+# Fetch and process tree data
+pnpm tsx scripts/fetch_otol.ts
+pnpm tsx scripts/preprocess_tree.ts
+
+# Start development server
+pnpm dev
+# or
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) to see the visualizer.
+
+### Environment Variables
+
+```bash
+# .env.local
+OPENAI_API_KEY=your_openai_api_key      # For LLM features
+REDIS_URL=your_redis_url                # Optional: For caching
+REDIS_TOKEN=your_redis_token            # Optional: For caching
+NEXT_PUBLIC_ANALYTICS_ID=your_id        # Optional: Analytics
+```
+
+## 📖 Documentation
+
+For detailed documentation, see the [docs/](docs/) directory:
+
+- [Architecture Overview](docs/architecture.md)
+- [API Reference](docs/api.md)
+- [Development Guide](docs/development.md)
+- [Deployment Guide](docs/deployment.md)
+
+## 🎯 Goals
 - Explore the Tree of Life with fluid pan, zoom, and focus
 - Provide rich details per taxon with images and lineage
 - Enable LLM-guided learning grounded in selected context
@@ -109,155 +186,478 @@ A modern, elegant, interactive Tree of Life visualizer built with Next.js and p5
 - `tests/`
 - `README.md`
 
-### Getting Started
+## 🛠️ Development
 
-#### Prerequisites
-- Node.js 20+
-- pnpm or npm
-- Optional: Redis (e.g., Upstash)
+### Available Scripts
 
-#### Scaffold
+```bash
+pnpm dev          # Start development server
+pnpm build        # Build for production
+pnpm start        # Start production server
+pnpm lint         # Run ESLint
+pnpm test         # Run unit tests
+pnpm test:e2e     # Run E2E tests
+pnpm typecheck    # Run TypeScript type checking
+```
+
+### Project Setup from Scratch
+
+<details>
+<summary>Click to expand detailed setup instructions</summary>
+
+#### 1. Create Next.js App
 ```bash
 pnpm create next-app@latest tree-of-life --ts --eslint --tailwind --app --src-dir false --import-alias @/*
 cd tree-of-life
 ```
 
-#### Install Dependencies
+#### 2. Install Core Dependencies
 ```bash
-pnpm add p5 zustand fuse.js next-themes @radix-ui/react-dialog @radix-ui/react-popover @radix-ui/react-slider @radix-ui/react-tabs class-variance-authority clsx tailwind-merge
-pnpm add -D @types/p5 @testing-library/react @testing-library/jest-dom vitest playwright @playwright/test
+# Runtime dependencies
+pnpm add p5 zustand fuse.js next-themes 
+pnpm add @radix-ui/react-dialog @radix-ui/react-popover 
+pnpm add @radix-ui/react-slider @radix-ui/react-tabs 
+pnpm add class-variance-authority clsx tailwind-merge
+
+# Development dependencies
+pnpm add -D @types/p5 @testing-library/react 
+pnpm add -D @testing-library/jest-dom vitest 
+pnpm add -D playwright @playwright/test tsx
 ```
 
-#### UI Kit (shadcn/ui)
+#### 3. Setup UI Components
 ```bash
 pnpm dlx shadcn@latest init -d
-pnpm dlx shadcn@latest add button input slider tabs dialog popover tooltip sheet switch select breadcrumb
+pnpm dlx shadcn@latest add button input slider tabs 
+pnpm dlx shadcn@latest add dialog popover tooltip sheet 
+pnpm dlx shadcn@latest add switch select breadcrumb
 ```
 
-#### Environment
-Create `.env.local`:
-```bash
-OPENAI_API_KEY=your_key
-REDIS_URL=your_url
-REDIS_TOKEN=your_token
-```
-
-#### Data
+#### 4. Prepare Data
 ```bash
 mkdir -p public/data scripts
-# Add scripts/fetch_otol.ts and scripts/preprocess_tree.ts, then run:
+# Create fetch and preprocessing scripts
 pnpm tsx scripts/fetch_otol.ts
 pnpm tsx scripts/preprocess_tree.ts
 ```
 
-#### Dev
-```bash
-pnpm dev
-```
+</details>
 
-### Implementation Notes
-- p5 runs only on the client, import dynamically with `ssr: false`
-- Use instance mode and avoid global sketch state
-- Compute layouts in a Web Worker and stream results to the canvas
+### Browser Requirements
 
-### Incremental Milestones Checklist
+- Chrome 90+
+- Firefox 88+
+- Safari 14+
+- Edge 90+
 
-#### Milestone 0 — Hello Canvas Demo
-- [ ] Scaffold Next.js app with Tailwind and shadcn/ui
-- [ ] Add base `layout.tsx` and `page.tsx`
-- [ ] Create client `TreeCanvas.tsx` using dynamic import with `ssr: false`
-- [ ] Render full-viewport p5 canvas and draw an animated circle
-- [ ] Add FPS toggle in a simple top bar
+WebGL support required for canvas rendering.
 
-#### Milestone 1 — Pan/Zoom Scaffold
-- [ ] Implement wheel zoom and mouse drag pan in p5 instance mode
-- [ ] Add reset view button
-- [ ] Add bounds and smoothing for camera transforms
+## 🏗️ Implementation Notes
 
-#### Milestone 2 — Data Bootstrapping
-- [ ] `scripts/fetch_otol.ts` downloads small sample tree
-- [ ] `scripts/preprocess_tree.ts` outputs `public/data/tree.json` with ids, names, ranks
-- [ ] Client loads JSON and memoizes in store
-- [ ] Render nodes as points with placeholder positions
+- **Client-side Rendering**: p5.js runs only on the client, import dynamically with `ssr: false`
+- **Instance Mode**: Use p5 instance mode to avoid global state pollution
+- **Web Workers**: Compute layouts and search in workers for non-blocking UI
+- **Progressive Enhancement**: Server renders UI shell, canvas loads progressively
+- **Caching Strategy**: Redis for LLM responses, browser cache for tree data
 
-#### Milestone 3 — Radial Layout
-- [ ] Implement `lib/layout/radial.ts` for node positions
-- [ ] Move layout to `workers/layout.worker.ts`
-- [ ] Draw edges and nodes in radial layout
-- [ ] Progressive rendering by depth
+## 📋 Implementation Roadmap
 
-#### Milestone 4 — Interaction
-- [ ] Spatial index for hover hit-testing
-- [ ] Hover highlight for node and path-to-root
-- [ ] `Tooltip` with name and rank
-- [ ] Click to focus with smooth zoom to node
-- [ ] `Breadcrumbs` show lineage
+Detailed milestone checklist for incremental development:
 
-#### Milestone 5 — Control Panel
-- [ ] Docked panel on desktop; bottom sheet on mobile
-- [ ] Controls: layout mode, max depth, labels toggle, animation speed
-- [ ] Keyboard shortcuts help modal
+### Phase 1: Foundation (Milestones 0-3)
 
-#### Milestone 6 — Rectangular Layout
-- [ ] Implement `lib/layout/rectangular.ts`
-- [ ] Animated transition between radial and rectangular
-- [ ] Persist choice in Zustand and URL params
+#### Milestone 0 — Project Setup & Hello Canvas
+- [ ] Initialize Next.js 14 app with TypeScript and Tailwind CSS
+- [ ] Configure `tsconfig.json` with strict mode and path aliases
+- [ ] Set up ESLint and Prettier with consistent code style rules
+- [ ] Create base `app/layout.tsx` with viewport meta and fonts
+- [ ] Create `app/page.tsx` with basic layout structure
+- [ ] Install p5.js and @types/p5 dependencies
+- [ ] Create `components/TreeCanvas.tsx` using dynamic import with `ssr: false`
+- [ ] Set up p5 instance mode with proper TypeScript types
+- [ ] Render full-viewport canvas with resize handler
+- [ ] Draw animated test circle to verify p5 is working
+- [ ] Add FPS counter overlay with toggle button
+- [ ] Create basic `components/TopBar.tsx` with app title
 
-#### Milestone 7 — Search
-- [ ] Index names and aliases with Fuse.js
-- [ ] `SearchBar` with debounced suggestions
-- [ ] Jump-to-taxon centers on node
-- [ ] `/api/search` server route fallback
+#### Milestone 1 — Camera System & Controls
+- [ ] Create `lib/camera.ts` with Camera class
+- [ ] Implement zoom level with min/max bounds (0.1 to 10)
+- [ ] Add pan offset with x/y coordinates
+- [ ] Implement wheel event handler for zoom (with preventDefault)
+- [ ] Add mouse drag detection (mousePressed, mouseDragged, mouseReleased)
+- [ ] Calculate world coordinates from screen coordinates
+- [ ] Add smooth interpolation for zoom transitions (lerp)
+- [ ] Implement velocity-based panning with friction
+- [ ] Add double-click to zoom in at point
+- [ ] Create reset view button that animates to origin
+- [ ] Add zoom in/out buttons with consistent step size
+- [ ] Display current zoom level as percentage
 
-#### Milestone 8 — Info Panel and Enrichment
-- [ ] `InfoPanel` tabs: Overview, Images, Lineage, Similar
-- [ ] `/api/taxon/[id]` merges local data with Wikipedia REST
-- [ ] Cache Wikipedia results
-- [ ] Lazy-load images with attribution
+#### Milestone 2 — Data Architecture & Loading
+- [ ] Create `types/tree.ts` with TreeNode, Edge, TaxonomicRank interfaces
+- [ ] Set up `scripts/fetch_otol.ts` with node-fetch
+- [ ] Fetch sample newick tree from Open Tree of Life API
+- [ ] Parse newick format into hierarchical structure
+- [ ] Create `scripts/preprocess_tree.ts` for data transformation
+- [ ] Generate stable IDs for each node (using path or hash)
+- [ ] Extract taxonomic ranks from OTT metadata
+- [ ] Calculate tree statistics (depth, node count, leaf count)
+- [ ] Output formatted JSON to `public/data/tree.json`
+- [ ] Create `lib/tree/loader.ts` for client-side loading
+- [ ] Implement tree data validation and error handling
+- [ ] Set up Zustand store with `store/useTreeStore.ts`
+- [ ] Add loading states and error boundaries
+- [ ] Render nodes as simple circles at random positions
 
-#### Milestone 9 — Theming
-- [ ] `next-themes` with system default and persistence
-- [ ] `ThemeToggle` in top bar
-- [ ] Color-by: taxonomy rank, kingdom, or trait palettes
-- [ ] High-contrast theme and smooth transitions
+#### Milestone 3 — Radial Layout Algorithm
+- [ ] Create `lib/layout/types.ts` with Layout interface
+- [ ] Implement `lib/layout/radial.ts` with RadialLayout class
+- [ ] Calculate tree depth using BFS traversal
+- [ ] Assign angular positions using equal angle subdivision
+- [ ] Calculate radial distance based on depth level
+- [ ] Handle leaf node distribution to avoid overlap
+- [ ] Implement Reingold-Tilford algorithm for better spacing
+- [ ] Add layout caching with node position Map
+- [ ] Create `workers/layout.worker.ts` with message protocol
+- [ ] Move layout computation to Web Worker
+- [ ] Stream layout results back to main thread progressively
+- [ ] Draw edges as lines between parent-child nodes
+- [ ] Style nodes based on type (internal vs leaf)
+- [ ] Add smooth animation when layout completes
+- [ ] Implement level-of-detail rendering by depth
 
-#### Milestone 10 — Mobile Support
-- [ ] Pinch-to-zoom and inertial panning
-- [ ] Tap and long-press actions
-- [ ] Touch-friendly hit targets
-- [ ] Bottom sheet controls refined
+### Phase 2: Core Interactions (Milestones 4-7)
 
-#### Milestone 11 — LLM Interaction
-- [ ] `/api/llm` streaming route
-- [ ] Prompt grounding with focus node and lineage
-- [ ] LLM drawer UI with suggested prompts
-- [ ] Rate limiting and response caching
+#### Milestone 4 — Hit Testing & Hover
+- [ ] Create `lib/hit-test/spatial-index.ts` with QuadTree implementation
+- [ ] Build spatial index from node positions
+- [ ] Implement point-in-circle hit detection
+- [ ] Add mouse move handler with hit testing
+- [ ] Track hovered node in component state
+- [ ] Highlight hovered node with larger radius
+- [ ] Create `lib/tree/traversal.ts` with path-to-root function
+- [ ] Highlight entire path from node to root on hover
+- [ ] Style path with increased stroke width and opacity
+- [ ] Create `components/Tooltip.tsx` with Radix UI
+- [ ] Show tooltip with node name and rank on hover
+- [ ] Position tooltip to avoid viewport edges
+- [ ] Add delay before showing/hiding tooltip
+- [ ] Clear highlights when mouse leaves canvas
 
-#### Milestone 12 — Performance
-- [ ] Offscreen buffers for static layers
-- [ ] Level-of-detail thresholds for nodes and labels
-- [ ] Color-picking buffer or KD-tree tuning for hit testing
-- [ ] Performance HUD and metric logging
+#### Milestone 5 — Focus & Navigation
+- [ ] Add focusedNode state to tree store
+- [ ] Implement click handler to set focused node
+- [ ] Create `lib/animation/tween.ts` for smooth transitions
+- [ ] Animate camera to center on clicked node
+- [ ] Calculate appropriate zoom level for focused node
+- [ ] Create `components/Breadcrumbs.tsx` component
+- [ ] Build breadcrumb trail from focused node to root
+- [ ] Make breadcrumb items clickable for navigation
+- [ ] Add keyboard event listeners (arrow keys)
+- [ ] Implement node traversal with up/down/left/right
+- [ ] Add Enter key to focus current node
+- [ ] Add Escape key to clear focus
+- [ ] Create focus ring visual indicator
+- [ ] Sync focused node with URL hash parameter
 
-#### Milestone 13 — Accessibility
-- [ ] Keyboard navigation between nodes and UI controls
-- [ ] ARIA labels and roles for interactive elements
-- [ ] Reduced-motion handling
-- [ ] Screen reader textual fallback of lineage
+#### Milestone 6 — Control Panel UI
+- [ ] Create `components/ControlPanel.tsx` container
+- [ ] Add collapsible sections with Radix Accordion
+- [ ] Create layout mode selector (radio group)
+- [ ] Add max depth slider (1-10 levels)
+- [ ] Create label visibility toggle switch
+- [ ] Add animation speed slider (0-2x)
+- [ ] Create node size slider (0.5x-2x)
+- [ ] Add edge opacity slider (0-100%)
+- [ ] Implement responsive layout with CSS Grid
+- [ ] Create mobile-specific `components/MobileSheet.tsx`
+- [ ] Use Radix Sheet for bottom drawer on mobile
+- [ ] Add swipe gestures for opening/closing
+- [ ] Create keyboard shortcuts modal dialog
+- [ ] Display all available shortcuts with descriptions
 
-#### Milestone 14 — Share and Persist
-- [ ] URL params for focus, zoom, layout, depth, theme
-- [ ] Share link button copies current state
-- [ ] Local storage for session restore
+#### Milestone 7 — Rectangular Layout
+- [ ] Create `lib/layout/rectangular.ts` with RectangularLayout class
+- [ ] Implement tidier tree algorithm for positioning
+- [ ] Calculate x positions based on tree structure
+- [ ] Calculate y positions based on depth
+- [ ] Handle variable node sizes in layout
+- [ ] Add horizontal and vertical spacing parameters
+- [ ] Create smooth transition between layouts
+- [ ] Interpolate node positions during transition
+- [ ] Morph edge paths during transition
+- [ ] Add layout toggle to control panel
+- [ ] Persist layout preference in localStorage
+- [ ] Update URL params with layout choice
+- [ ] Optimize rectangular layout for wide trees
+- [ ] Add compact mode for dense visualization
 
-#### Milestone 15 — Quality and Delivery
-- [ ] Unit tests for layout math and state reducers
-- [ ] Integration tests for hover/click/search flows
-- [ ] E2E tests for desktop and mobile
-- [ ] GitHub Actions CI, Vercel deploy
-- [ ] Analytics with opt-out toggle
+### Phase 3: Search & Discovery (Milestones 8-10)
 
-### Acceptance Criteria
+#### Milestone 8 — Search Implementation
+- [ ] Install and configure Fuse.js
+- [ ] Create `lib/search/indexer.ts` for building search index
+- [ ] Index node names, common names, and synonyms
+- [ ] Configure fuzzy search parameters
+- [ ] Create `components/SearchBar.tsx` with Radix Combobox
+- [ ] Implement debounced search input
+- [ ] Display search suggestions in dropdown
+- [ ] Show match score and highlight matched text
+- [ ] Add keyboard navigation for suggestions
+- [ ] Implement "jump to taxon" on selection
+- [ ] Create `app/api/search/route.ts` endpoint
+- [ ] Add server-side search as fallback
+- [ ] Cache frequent searches in memory
+- [ ] Add search history with recent searches
+- [ ] Create clear search button
+
+#### Milestone 9 — Info Panel & Enrichment
+- [ ] Create `components/InfoPanel.tsx` with Radix Tabs
+- [ ] Design Overview tab with basic taxon info
+- [ ] Add taxonomic rank and classification
+- [ ] Display number of descendants and siblings
+- [ ] Create Images tab with lazy loading
+- [ ] Implement `lib/wikipedia.ts` for fetching data
+- [ ] Fetch Wikipedia extract and main image
+- [ ] Add image attribution and license info
+- [ ] Create Lineage tab with ancestor list
+- [ ] Make lineage items clickable for navigation
+- [ ] Create Similar tab with related taxa
+- [ ] Calculate similarity based on tree distance
+- [ ] Create `app/api/taxon/[id]/route.ts` endpoint
+- [ ] Implement Redis caching for Wikipedia data
+- [ ] Add loading skeletons for async content
+- [ ] Handle errors gracefully with fallbacks
+
+#### Milestone 10 — Advanced Search Features
+- [ ] Add search filters (rank, kingdom, etc.)
+- [ ] Implement advanced query syntax
+- [ ] Create search results page/modal
+- [ ] Add pagination for large result sets
+- [ ] Implement search highlighting in tree
+- [ ] Dim non-matching nodes
+- [ ] Create "Find in tree" feature
+- [ ] Add regular expression search support
+- [ ] Create saved searches functionality
+- [ ] Export search results as CSV/JSON
+- [ ] Add search analytics tracking
+- [ ] Create search suggestions based on context
+- [ ] Implement "Did you mean?" corrections
+- [ ] Add phonetic search for scientific names
+
+### Phase 4: Visual Enhancement (Milestones 11-13)
+
+#### Milestone 11 — Theming System
+- [ ] Set up next-themes provider
+- [ ] Create theme context and hooks
+- [ ] Define CSS variables for colors
+- [ ] Create light theme palette
+- [ ] Create dark theme palette
+- [ ] Add theme toggle button to top bar
+- [ ] Implement smooth theme transitions
+- [ ] Create `components/ThemeCustomizer.tsx`
+- [ ] Add preset color schemes
+- [ ] Create color-by-rank mode
+- [ ] Create color-by-kingdom mode
+- [ ] Add custom color picker
+- [ ] Implement high-contrast mode
+- [ ] Save theme preferences to localStorage
+
+#### Milestone 12 — Visual Enhancements
+- [ ] Add node icons based on taxonomic rank
+- [ ] Create custom SVG icons for major groups
+- [ ] Implement node clustering for dense areas
+- [ ] Add expand/collapse for clusters
+- [ ] Create heat map visualization mode
+- [ ] Color nodes by evolutionary age
+- [ ] Add branch length visualization
+- [ ] Show confidence scores on edges
+- [ ] Create minimap overview component
+- [ ] Add grid background option
+- [ ] Implement focus highlight effects
+- [ ] Add particle effects for transitions
+- [ ] Create screenshot capture feature
+- [ ] Add watermark option for exports
+
+#### Milestone 13 — Label System
+- [ ] Create intelligent label placement algorithm
+- [ ] Avoid label overlap with force simulation
+- [ ] Implement label level-of-detail (LOD)
+- [ ] Show more labels when zoomed in
+- [ ] Add label background for readability
+- [ ] Create curved labels for radial layout
+- [ ] Add label truncation with ellipsis
+- [ ] Implement label priority system
+- [ ] Show important taxa labels first
+- [ ] Create label style options
+- [ ] Add font size controls
+- [ ] Implement label search highlighting
+- [ ] Add label hover effects
+- [ ] Create label toggle per rank
+
+### Phase 5: Mobile & Touch (Milestones 14-15)
+
+#### Milestone 14 — Touch Interactions
+- [ ] Detect touch device capabilities
+- [ ] Implement pinch-to-zoom gesture
+- [ ] Calculate zoom delta from touch distance
+- [ ] Add two-finger pan support
+- [ ] Implement momentum scrolling
+- [ ] Add tap to select node
+- [ ] Implement long-press for context menu
+- [ ] Create touch-friendly hit targets (44px minimum)
+- [ ] Add haptic feedback for interactions
+- [ ] Optimize touch event handling
+- [ ] Prevent default browser gestures
+- [ ] Add gesture hints overlay
+- [ ] Create tutorial for first-time users
+- [ ] Test on various mobile devices
+
+#### Milestone 15 — Mobile UI Optimization
+- [ ] Create responsive breakpoints
+- [ ] Adjust UI density for mobile
+- [ ] Optimize control panel for touch
+- [ ] Create bottom navigation bar
+- [ ] Add quick action buttons
+- [ ] Implement pull-to-refresh
+- [ ] Create mobile-specific search UI
+- [ ] Optimize info panel for mobile
+- [ ] Add swipe between tabs
+- [ ] Reduce animation complexity on mobile
+- [ ] Implement adaptive quality settings
+- [ ] Add offline support with service worker
+- [ ] Cache critical assets locally
+- [ ] Test on slow network connections
+
+### Phase 6: AI & Intelligence (Milestones 16-17)
+
+#### Milestone 16 — LLM Integration
+- [ ] Create `app/api/llm/route.ts` endpoint
+- [ ] Set up OpenAI SDK configuration
+- [ ] Implement streaming response handler
+- [ ] Create system prompt with context
+- [ ] Add focused taxon information to prompt
+- [ ] Include lineage and related taxa
+- [ ] Create `components/AskAI.tsx` interface
+- [ ] Add suggested questions/prompts
+- [ ] Implement chat-like interaction
+- [ ] Stream responses with markdown rendering
+- [ ] Add copy response button
+- [ ] Create conversation history
+- [ ] Implement rate limiting with Redis
+- [ ] Add usage tracking and quotas
+
+#### Milestone 17 — AI Features
+- [ ] Create taxon comparison tool
+- [ ] Generate evolutionary explanations
+- [ ] Add "Explain Like I'm 5" mode
+- [ ] Create interesting facts generator
+- [ ] Implement related taxa suggestions
+- [ ] Add evolutionary timeline generator
+- [ ] Create quiz/learning mode
+- [ ] Generate custom tours of the tree
+- [ ] Add pronunciation guides
+- [ ] Create etymology explanations
+- [ ] Implement smart search with NLP
+- [ ] Add question answering system
+- [ ] Create summary generation
+- [ ] Cache AI responses for efficiency
+
+### Phase 7: Performance (Milestones 18-19)
+
+#### Milestone 18 — Rendering Optimization
+- [ ] Implement view frustum culling
+- [ ] Only render visible nodes
+- [ ] Create offscreen canvas buffers
+- [ ] Separate static and dynamic layers
+- [ ] Implement dirty rectangle rendering
+- [ ] Add request animation frame throttling
+- [ ] Create frame budget system
+- [ ] Batch similar draw operations
+- [ ] Implement texture atlasing for icons
+- [ ] Add WebGL renderer option
+- [ ] Create quality presets (low/medium/high)
+- [ ] Add performance monitoring HUD
+- [ ] Track FPS, memory, draw calls
+- [ ] Implement automatic quality adjustment
+
+#### Milestone 19 — Data Optimization
+- [ ] Implement progressive data loading
+- [ ] Load tree data in chunks
+- [ ] Create level-of-detail data structures
+- [ ] Add data compression with gzip
+- [ ] Implement virtual scrolling for lists
+- [ ] Create efficient data structures
+- [ ] Use TypedArrays for positions
+- [ ] Implement object pooling
+- [ ] Add memory management utilities
+- [ ] Create cache eviction strategies
+- [ ] Optimize search index size
+- [ ] Use Web Assembly for heavy computation
+- [ ] Add performance benchmarks
+- [ ] Profile and optimize hot paths
+
+### Phase 8: Accessibility (Milestone 20)
+
+#### Milestone 20 — Full Accessibility
+- [ ] Add skip navigation links
+- [ ] Implement focus trap for modals
+- [ ] Add ARIA labels to all controls
+- [ ] Create screen reader announcements
+- [ ] Implement roving tabindex for tree
+- [ ] Add keyboard navigation instructions
+- [ ] Create high contrast mode
+- [ ] Ensure WCAG AA compliance
+- [ ] Add focus visible indicators
+- [ ] Implement reduced motion mode
+- [ ] Create text-only fallback view
+- [ ] Add alt text for all images
+- [ ] Implement language support
+- [ ] Add RTL layout support
+- [ ] Test with screen readers
+
+### Phase 9: Sharing & Persistence (Milestone 21)
+
+#### Milestone 21 — State Management & Sharing
+- [ ] Create URL state serialization
+- [ ] Encode focus, zoom, layout in URL
+- [ ] Implement URL shortener service
+- [ ] Create share button with options
+- [ ] Generate social media preview cards
+- [ ] Add copy link functionality
+- [ ] Implement bookmark system
+- [ ] Save custom views
+- [ ] Create workspace persistence
+- [ ] Add export to PNG/SVG
+- [ ] Implement print stylesheet
+- [ ] Create embeddable widget version
+- [ ] Add API for external integration
+- [ ] Generate citation formats
+
+### Phase 10: Quality & Deployment (Milestone 22)
+
+#### Milestone 22 — Testing & Deployment
+- [ ] Set up Vitest configuration
+- [ ] Write unit tests for utilities
+- [ ] Test layout algorithms
+- [ ] Test search functionality
+- [ ] Create component tests with React Testing Library
+- [ ] Set up Playwright for E2E tests
+- [ ] Test critical user journeys
+- [ ] Add visual regression tests
+- [ ] Create performance benchmarks
+- [ ] Set up GitHub Actions CI/CD
+- [ ] Add pre-commit hooks
+- [ ] Configure Vercel deployment
+- [ ] Set up environment variables
+- [ ] Add error tracking (Sentry)
+- [ ] Implement analytics (privacy-friendly)
+- [ ] Create deployment checklist
+- [ ] Write user documentation
+- [ ] Create video tutorials
+
+## ✅ Acceptance Criteria
 - 50k+ nodes smooth on desktop and usable on modern mobile
 - Hover highlight under 16ms, click-to-focus stable frame under 300ms
 - Search results under 100ms for 50k taxa
@@ -265,8 +665,42 @@ pnpm dev
 - WCAG AA color contrast and keyboard operability
 - Theming persists and share links restore state
 
-### Future Extensions
+## 🚧 Future Extensions
+
 - Time slider for evolutionary timelines
 - Phylogenetic uncertainty visualization
 - User annotations and saved views
 - Export to PNG/SVG and share cards
+- Collaborative exploration sessions
+- AR/VR support for immersive exploration
+- Integration with genomic databases
+- Custom tree uploads and comparisons
+
+## 🤝 Contributing
+
+Contributions are welcome! Please read our [Contributing Guidelines](CONTRIBUTING.md) before submitting PRs.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- [Open Tree of Life](https://tree.opentreeoflife.org/) for providing the synthetic tree data
+- [p5.js](https://p5js.org/) community for the powerful creative coding library
+- [Next.js](https://nextjs.org/) team for the amazing React framework
+- [shadcn/ui](https://ui.shadcn.com/) for the beautiful UI components
+
+## 📮 Contact
+
+Project Link: [https://github.com/alpha-adam/tol](https://github.com/alpha-adam/tol)
+
+---
+
+<p align="center">Made with ❤️ for exploring the wonders of life</p>

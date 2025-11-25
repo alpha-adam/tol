@@ -48,15 +48,23 @@ export class Camera {
 
   handleWheel(deltaY: number, mouseX: number, mouseY: number) {
     const zoomDelta = -deltaY * this.zoomSpeed;
-    const newZoom = Math.min(Math.max(this.state.targetZoom * (1 + zoomDelta), this.minZoom), this.maxZoom);
+    const zoomFactor = 1 + zoomDelta;
+    const newZoom = Math.min(Math.max(this.state.targetZoom * zoomFactor, this.minZoom), this.maxZoom);
     
-    // Use targetPanX/Y for consistent world coordinates
-    const worldX = (mouseX - this.width / 2 - this.state.targetPanX) / this.state.targetZoom;
-    const worldY = (mouseY - this.height / 2 - this.state.targetPanY) / this.state.targetZoom;
+    // Calculate the actual zoom factor that will be applied
+    const actualZoomFactor = newZoom / this.state.targetZoom;
     
+    // Calculate offset from canvas center to mouse position
+    const offsetX = mouseX - this.width / 2;
+    const offsetY = mouseY - this.height / 2;
+    
+    // Update zoom
     this.state.targetZoom = newZoom;
-    this.state.targetPanX = mouseX - this.width / 2 - worldX * newZoom;
-    this.state.targetPanY = mouseY - this.height / 2 - worldY * newZoom;
+    
+    // Adjust pan to zoom towards mouse position
+    // When zooming, we need to adjust the pan so that the point under the mouse stays fixed
+    this.state.targetPanX = this.state.targetPanX * actualZoomFactor - offsetX * (actualZoomFactor - 1);
+    this.state.targetPanY = this.state.targetPanY * actualZoomFactor - offsetY * (actualZoomFactor - 1);
   }
 
   startDrag(mouseX: number, mouseY: number) {
@@ -72,12 +80,13 @@ export class Camera {
 
     const deltaX = mouseX - this.state.lastMouseX;
     const deltaY = mouseY - this.state.lastMouseY;
-
-    this.state.targetPanX += deltaX * this.panSpeed;
-    this.state.targetPanY += deltaY * this.panSpeed;
-
-    this.state.velocityX = deltaX;
-    this.state.velocityY = deltaY;
+    const movedEnough = Math.abs(deltaX) >= 2 || Math.abs(deltaY) >= 2;
+    if (movedEnough) {
+      this.state.targetPanX += deltaX * this.panSpeed;
+      this.state.targetPanY += deltaY * this.panSpeed;
+      this.state.velocityX = deltaX;
+      this.state.velocityY = deltaY;
+    }
 
     this.state.lastMouseX = mouseX;
     this.state.lastMouseY = mouseY;
@@ -85,16 +94,25 @@ export class Camera {
 
   endDrag() {
     this.state.isDragging = false;
+    this.state.velocityX = 0;
+    this.state.velocityY = 0;
   }
 
   handleDoubleClick(mouseX: number, mouseY: number) {
-    // Use targetPanX/Y for consistent world coordinates
-    const worldX = (mouseX - this.width / 2 - this.state.targetPanX) / this.state.targetZoom;
-    const worldY = (mouseY - this.height / 2 - this.state.targetPanY) / this.state.targetZoom;
-
-    this.state.targetZoom = Math.min(this.state.targetZoom * 2, this.maxZoom);
-    this.state.targetPanX = mouseX - this.width / 2 - worldX * this.state.targetZoom;
-    this.state.targetPanY = mouseY - this.height / 2 - worldY * this.state.targetZoom;
+    // Zoom in by 2x
+    const newZoom = Math.min(this.state.targetZoom * 2, this.maxZoom);
+    const actualZoomFactor = newZoom / this.state.targetZoom;
+    
+    // Calculate offset from canvas center to mouse position
+    const offsetX = mouseX - this.width / 2;
+    const offsetY = mouseY - this.height / 2;
+    
+    // Update zoom
+    this.state.targetZoom = newZoom;
+    
+    // Adjust pan to zoom towards mouse position
+    this.state.targetPanX = this.state.targetPanX * actualZoomFactor - offsetX * (actualZoomFactor - 1);
+    this.state.targetPanY = this.state.targetPanY * actualZoomFactor - offsetY * (actualZoomFactor - 1);
   }
 
   zoomIn() {
@@ -143,16 +161,8 @@ export class Camera {
     this.state.panY += (this.state.targetPanY - this.state.panY) * this.lerpFactor;
 
     if (!this.state.isDragging) {
-      if (Math.abs(this.state.velocityX) > 0.1 || Math.abs(this.state.velocityY) > 0.1) {
-        this.state.targetPanX += this.state.velocityX;
-        this.state.targetPanY += this.state.velocityY;
-        this.state.velocityX *= this.friction;
-        this.state.velocityY *= this.friction;
-      } else {
-        // Stop velocity when it's too small
-        this.state.velocityX = 0;
-        this.state.velocityY = 0;
-      }
+      this.state.velocityX = 0;
+      this.state.velocityY = 0;
     }
   }
 

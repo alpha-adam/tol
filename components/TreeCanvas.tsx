@@ -96,6 +96,9 @@ export default function TreeCanvas() {
       }
 
       p.mouseWheel = (event: any) => {
+        if (event?.preventDefault) {
+          event.preventDefault()
+        }
         if (cameraRef.current && !isInteractingWithUI.current) {
           cameraRef.current.handleWheel(event.delta, p.mouseX, p.mouseY)
         }

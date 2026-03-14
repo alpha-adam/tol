@@ -278,18 +278,18 @@ Detailed milestone checklist for incremental development:
 - [x] Create basic `components/TopBar.tsx` with app title
 
 #### Milestone 1 — Camera System & Controls
-- [ ] Create `lib/camera.ts` with Camera class
-- [ ] Implement zoom level with min/max bounds (0.1 to 10)
-- [ ] Add pan offset with x/y coordinates
-- [ ] Implement wheel event handler for zoom (with preventDefault)
-- [ ] Add mouse drag detection (mousePressed, mouseDragged, mouseReleased)
-- [ ] Calculate world coordinates from screen coordinates
-- [ ] Add smooth interpolation for zoom transitions (lerp)
-- [ ] Implement velocity-based panning with friction
-- [ ] Add double-click to zoom in at point
-- [ ] Create reset view button that animates to origin
-- [ ] Add zoom in/out buttons with consistent step size
-- [ ] Display current zoom level as percentage
+- [x] Create `lib/camera.ts` with Camera class
+- [x] Implement zoom level with min/max bounds (0.1 to 10)
+- [x] Add pan offset with x/y coordinates
+- [x] Implement wheel event handler for zoom (with preventDefault)
+- [x] Add mouse drag detection (mousePressed, mouseDragged, mouseReleased)
+- [x] Calculate world coordinates from screen coordinates
+- [x] Add smooth interpolation for zoom transitions (lerp)
+- [x] Implement velocity-based panning with friction
+- [x] Add double-click to zoom in at point
+- [x] Create reset view button that animates to origin
+- [x] Add zoom in/out buttons with consistent step size
+- [x] Display current zoom level as percentage
 
 #### Milestone 2 — Data Architecture & Loading
 - [ ] Create `types/tree.ts` with TreeNode, Edge, TaxonomicRank interfaces
